@@ -1,3 +1,12 @@
 // entry point
+require("dotenv").config();
+const app = require("./app");
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`✅ TechMarket API running on http://localhost:${PORT}`);
+});
+
 console.log("Loaded PORT:", process.env.PORT);
 console.log("Loaded DB URL:", process.env.DATABASE_URL);
