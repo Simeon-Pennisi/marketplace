@@ -6,12 +6,16 @@ const listingsRouter = require("./routes/listings");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Vite default port
-    credentials: true,
-  })
-);
+// CORS configuration
+// appeared to cause issues with cookie handling in some cases
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173", // Vite default port
+//     credentials: true,
+//   })
+// );
+
+app.use(cors()); // 👈 allow all origins for local dev
 
 app.use(express.json());
 

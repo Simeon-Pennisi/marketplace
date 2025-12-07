@@ -16,7 +16,10 @@ function ListingDetailPage() {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`${API_BASE_URL}/listings/${id}`);
+        const url = `${API_BASE_URL}/listings/${id}`;
+        console.log("Fetching listing detail from:", url);
+
+        const res = await fetch(url);
         if (!res.ok) {
           throw new Error("Failed to fetch listing");
         }
@@ -31,7 +34,9 @@ function ListingDetailPage() {
       }
     }
 
-    fetchListing();
+    if (id) {
+      fetchListing();
+    }
   }, [id]);
 
   if (loading) {

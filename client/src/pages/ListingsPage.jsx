@@ -34,6 +34,8 @@ function ListingsPage() {
           queryString ? `?${queryString}` : ""
         }`;
 
+        console.log("Fetching listings from:", url);
+
         const res = await fetch(url);
         if (!res.ok) {
           throw new Error("Failed to fetch listings");
