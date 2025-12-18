@@ -89,6 +89,7 @@ async function getUserByEmail(email) {
   return result.rows[0];
 }
 
+// to be updated
 async function seedListings(sellerId) {
   await pool.query(
     `
@@ -97,13 +98,13 @@ async function seedListings(sellerId) {
     VALUES
       ($1, 'Dell 27" 144Hz Monitor', 19999, 'like_new', 'monitor', 'Dell',
         '27 inch, 144Hz, 1ms response, 2560x1440',
-        'https://via.placeholder.com/400x300?text=Dell+Monitor'),
+        'https://placehold.co/400x300?text=Dell+Monitor'),
       ($1, 'Lenovo ThinkPad X1 Carbon', 89999, 'good', 'laptop', 'Lenovo',
         'Intel i7, 16GB RAM, 512GB SSD, 14 inch FHD',
-        'https://via.placeholder.com/400x300?text=ThinkPad+X1'),
+        'https://placehold.co/400x300?text=ThinkPad+X1'),
       ($1, 'Audio-Technica Studio Headphones', 7999, 'like_new', 'audio', 'Audio-Technica',
         'Closed-back, over-ear, great for mixing and casual listening',
-        'https://via.placeholder.com/400x300?text=Headphones')
+        'https://placehold.co/400x300?text=Headphones')
     ON CONFLICT DO NOTHING;
   `,
     [sellerId]
