@@ -1,8 +1,9 @@
 // express app
-const express = require("express");
-const cors = require("cors");
-const healthRouter = require("./routes/health");
-const listingsRouter = require("./routes/listings");
+import express from "express";
+import cors from "cors";
+import healthRouter from "./routes/health.js";
+// import listingsRouter from "./routes/listings.js";
+import router from "./routes/listings.js";
 
 const app = express();
 
@@ -21,10 +22,10 @@ app.use(express.json());
 
 // Routes
 app.use("/api/health", healthRouter);
-app.use("/api/listings", listingsRouter);
+app.use("/api/listings", router);
 
 // Later you'll add:
 // app.use('/api/auth', authRouter)
 // etc.
 
-module.exports = app;
+export default app;

@@ -1,5 +1,5 @@
 // schema and seed data
-const pool = require("./index");
+import pool from "./index.js";
 
 async function createTables() {
   const query = `

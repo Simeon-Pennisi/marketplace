@@ -1,7 +1,7 @@
 // health.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const pool = require("../db");
+import pool from "../db/index.js";
 
 router.get("/", async (req, res) => {
   try {
@@ -17,4 +17,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
