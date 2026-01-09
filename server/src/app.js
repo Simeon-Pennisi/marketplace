@@ -4,6 +4,7 @@ import cors from "cors";
 import healthRouter from "./routes/health.js";
 // import listingsRouter from "./routes/listings.js";
 import router from "./routes/listings.js";
+import authRouter from "./routes/auth.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/health", healthRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/listings", router);
 
 // Later you'll add:
