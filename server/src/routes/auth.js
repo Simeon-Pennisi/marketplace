@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import pool from "../db/index.js";
+import requireAuth from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
@@ -10,6 +11,10 @@ const normalizeEmail = (email) =>
     .trim()
     .toLowerCase();
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+router.get("/me", requireAuth, (req, res) => {
+  res.json({ user: req.user });
+});
 
 router.post("/register", async (req, res) => {
   try {
