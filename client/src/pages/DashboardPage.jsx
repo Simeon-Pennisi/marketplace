@@ -1,12 +1,25 @@
-import "../styles/pages/dashboard.css";
+import { useAuth } from "../context/AuthContext.jsx";
 
-function DashboardPage() {
+export default function DashboardPage() {
+  const { user, logout } = useAuth();
+
   return (
     <div className="page dashboard-page">
       <h1>Seller Dashboard</h1>
-      <p>(Stats, listings, revenue — coming in Chapter 6)</p>
+
+      <p>
+        Signed in as: <strong>{user?.email}</strong>
+      </p>
+      {user?.name && <p>Name: {user.name}</p>}
+
+      <button onClick={logout}>Logout</button>
+
+      <hr />
+
+      <p>
+        Chapter 4 will populate this with listing metrics (favorites, category
+        averages, simulated orders).
+      </p>
     </div>
   );
 }
-
-export default DashboardPage;
