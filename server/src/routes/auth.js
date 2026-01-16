@@ -12,8 +12,32 @@ const normalizeEmail = (email) =>
     .toLowerCase();
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-router.get("/me", requireAuth, (req, res) => {
-  res.json({ user: req.user });
+router.get("/me", requireAuth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pool.query(
+      `
+      SELECT id, name, email, created_at
+      FROM users
+      WHERE id = $1
+      LIMIT 1;
+      `,
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      // Token is valid but user no longer exists (deleted) or DB mismatch
+      return res.status(401).json({ message: "User not found for token." });
+    }
+
+    return res.json({ user: result.rows[0] });
+  } catch (err) {
+    console.error("Me error:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error fetching current user." });
+  }
 });
 
 router.post("/register", async (req, res) => {
@@ -57,7 +81,7 @@ router.post("/register", async (req, res) => {
     const token = jwt.sign(
       { sub: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "10s" }
     );
 
     return res.status(201).json({ user, token });
