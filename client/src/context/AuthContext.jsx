@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setTokenState] = useState(authApi.getToken());
   const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   // Hydrate user from token on initial load
   useEffect(() => {
@@ -29,6 +30,7 @@ export function AuthProvider({ children }) {
         authApi.clearToken();
         setUser(null);
         setTokenState(null);
+        setAuthError("Session expired. Please log in again.");
       } finally {
         setIsLoading(false);
       }

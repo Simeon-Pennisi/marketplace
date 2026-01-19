@@ -23,7 +23,7 @@
 html,
 body {
   font-family: system-ui, sans-serif;
-  background: #f7f9fc;
+  background: gray;
   color: #333;
   min-height: 100vh;
 }
