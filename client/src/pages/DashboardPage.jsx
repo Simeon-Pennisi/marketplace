@@ -1,7 +1,10 @@
+// DashboardPage.jsx
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { user, logout, authNotice, authError } = useAuth();
+
+  console.log("DashboardPage render:", { user, authNotice, authError });
 
   return (
     <div className="page dashboard-page">
@@ -12,7 +15,8 @@ export default function DashboardPage() {
       </p>
       {user?.name && <p>Name: {user.name}</p>}
 
-      <button onClick={logout}>Logout</button>
+      {/* <button onClick={logout}>Logout</button> */}
+      <button onClick={() => logout()}>Logout</button>
 
       <hr />
 
@@ -20,6 +24,9 @@ export default function DashboardPage() {
         Chapter 4 will populate this with listing metrics (favorites, category
         averages, simulated orders).
       </p>
+
+      {authNotice && <p className="notice">{authNotice}</p>}
+      {authError && <p className="error">{authError}</p>}
     </div>
   );
 }

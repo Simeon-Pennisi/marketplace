@@ -2,6 +2,8 @@ import { Routes, Route, Link } from "react-router-dom";
 import RequireAuth from "./components/RequireAuth.jsx";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
+// import { useAuth } from "./context/AuthContext.jsx";
+// add this to the header or footer when you create them
 
 // Pages
 import HomePage from "./pages/HomePage.jsx";
@@ -11,6 +13,8 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 
+// const { user, logout, authNotice, authError } = useAuth();
+// add this too
 function App() {
   return (
     <>
@@ -20,6 +24,12 @@ function App() {
         <Link to="/listings">Browse</Link>
         <Link to="/dashboard">Dashboard</Link>
       </nav>
+
+      {/* <>
+        <p className="logoutWarningNotice">Here is the logout warning</p>
+        {authNotice && <div style={{ color: "orange" }}>{authNotice}</div>}
+        {authError && <p className="error">{authError}</p>}
+      </> */}
 
       <Routes>
         <Route path="/" element={<HomePage />} />

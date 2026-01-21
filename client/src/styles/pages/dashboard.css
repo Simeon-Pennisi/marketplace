@@ -1,1 +1,6 @@
 /* style for seller dashboard */
+.notice {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border: 3px solid #faebcc;
+}
