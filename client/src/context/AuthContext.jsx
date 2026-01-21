@@ -1,8 +1,6 @@
 // AuthContext.jsx
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import * as authApi from "../api/auth";
-// import { getTokenExpiryDate } from "../utils/jwt";
-// below line is temp, uncomment the above line when removed
 import { decodeJwt, getTokenExpiryDate } from "../utils/jwt";
 
 const AuthContext = createContext(null);
@@ -18,7 +16,6 @@ export function AuthProvider({ children }) {
 
     async function hydrate() {
       try {
-        // setAuthError(null); // login,logout only
         const existingToken = authApi.getToken();
 
         if (!existingToken) {
@@ -38,7 +35,6 @@ export function AuthProvider({ children }) {
           setIsLoading(false);
         }
       } catch (err) {
-        // Token invalid/expired OR user missing
         // IMPORTANT: read and decode BEFORE clearing token
         const existingToken = authApi.getToken();
 
@@ -67,25 +63,6 @@ export function AuthProvider({ children }) {
           setTokenState(null);
           setIsLoading(false);
         }
-
-        //     if (existingToken) {
-        //       const expiryDate = getTokenExpiryDate(existingToken);
-        //       if (expiryDate) {
-        //         setAuthError(
-        //           `Session expired at ${expiryDate.toLocaleTimeString()}. Please log in again.`
-        //         );
-        //       } else {
-        //         setAuthError("Session expired. Please log in again.");
-        //       }
-        //     } else {
-        //       setAuthError("Session expired. Please log in again.");
-        //     }
-
-        //     authApi.clearToken();
-        //     setUser(null);
-        //     setTokenState(null);
-        //   } finally {
-        //     setIsLoading(false);
       }
     }
 
@@ -121,7 +98,7 @@ export function AuthProvider({ children }) {
     setAuthError(null);
   }
 
-  // ✅ THIS is where your useMemo block goes
+  // useMemo block
   const value = useMemo(
     () => ({
       user,
