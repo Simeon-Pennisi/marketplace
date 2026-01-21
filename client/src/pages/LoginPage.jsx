@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  // const { login } = useAuth();
+  const { login, authError } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -55,6 +56,7 @@ export default function LoginPage() {
         </label>
 
         {error && <p className="error">{error}</p>}
+        {authError && <p className="error">{authError}</p>}
 
         <button disabled={submitting} type="submit">
           {submitting ? "Signing in..." : "Sign in"}

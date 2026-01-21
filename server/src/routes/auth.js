@@ -6,6 +6,8 @@ import requireAuth from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "45s";
+
 const normalizeEmail = (email) =>
   String(email || "")
     .trim()
@@ -53,7 +55,7 @@ router.post("/register", async (req, res) => {
     const token = jwt.sign(
       { sub: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "30s" }
+      { expiresIn: JWT_EXPIRES_IN }
     );
 
     return res.status(201).json({ user, token });
@@ -92,7 +94,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { sub: row.id, email: row.email },
       process.env.JWT_SECRET,
-      { expiresIn: "30s" }
+      { expiresIn: JWT_EXPIRES_IN }
     );
     const user = { id: row.id, name: row.name, email: row.email };
 

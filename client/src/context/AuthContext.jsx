@@ -1,6 +1,9 @@
+// AuthContext.jsx
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-// import * as authApi from "../api/auth";
-import * as authApi from "../api/auth.js";
+import * as authApi from "../api/auth";
+// import { getTokenExpiryDate } from "../utils/jwt";
+// below line is temp, uncomment the above line when removed
+import { decodeJwt, getTokenExpiryDate } from "../utils/jwt";
 
 const AuthContext = createContext(null);
 
@@ -10,36 +13,91 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [authError, setAuthError] = useState(null);
 
-  // Hydrate user from token on initial load
   useEffect(() => {
+    let cancelled = false;
+
     async function hydrate() {
       try {
+        // setAuthError(null); // login,logout only
         const existingToken = authApi.getToken();
+
         if (!existingToken) {
-          setUser(null);
-          setTokenState(null);
+          if (!cancelled) {
+            setUser(null);
+            setTokenState(null);
+            setIsLoading(false);
+          }
           return;
         }
 
         const data = await authApi.me(existingToken);
-        setUser(data.user);
-        setTokenState(existingToken);
+
+        if (!cancelled) {
+          setUser(data.user);
+          setTokenState(existingToken);
+          setIsLoading(false);
+        }
       } catch (err) {
-        // Token invalid/expired or user missing
-        console.warn("Auth hydrate failed:", err.message);
-        authApi.clearToken();
-        setUser(null);
-        setTokenState(null);
-        setAuthError("Session expired. Please log in again.");
-      } finally {
-        setIsLoading(false);
+        // Token invalid/expired OR user missing
+        // IMPORTANT: read and decode BEFORE clearing token
+        const existingToken = authApi.getToken();
+
+        // test logs
+        console.log("hydrate failed:", err?.message);
+        console.log("existingToken:", existingToken);
+        console.log("decoded payload:", decodeJwt(existingToken));
+        console.log("expiry date:", getTokenExpiryDate(existingToken));
+        console.log("existingToken raw:", existingToken);
+        console.log("token parts:", existingToken?.split(".")?.length);
+
+        if (!cancelled) {
+          setAuthError((prev) => {
+            if (prev) return prev;
+
+            if (existingToken) {
+              const expiryDate = getTokenExpiryDate(existingToken);
+              if (expiryDate) {
+                return `Session expired at ${expiryDate.toLocaleTimeString()}. Please log in again.`;
+              }
+            }
+            return "Session expired. Please log in again.";
+          });
+          authApi.clearToken();
+          setUser(null);
+          setTokenState(null);
+          setIsLoading(false);
+        }
+
+        //     if (existingToken) {
+        //       const expiryDate = getTokenExpiryDate(existingToken);
+        //       if (expiryDate) {
+        //         setAuthError(
+        //           `Session expired at ${expiryDate.toLocaleTimeString()}. Please log in again.`
+        //         );
+        //       } else {
+        //         setAuthError("Session expired. Please log in again.");
+        //       }
+        //     } else {
+        //       setAuthError("Session expired. Please log in again.");
+        //     }
+
+        //     authApi.clearToken();
+        //     setUser(null);
+        //     setTokenState(null);
+        //   } finally {
+        //     setIsLoading(false);
       }
     }
 
     hydrate();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function register({ name, email, password }) {
+    setAuthError(null);
     const data = await authApi.register({ name, email, password });
     authApi.setToken(data.token);
     setTokenState(data.token);
@@ -48,6 +106,7 @@ export function AuthProvider({ children }) {
   }
 
   async function login({ email, password }) {
+    setAuthError(null);
     const data = await authApi.login({ email, password });
     authApi.setToken(data.token);
     setTokenState(data.token);
@@ -59,19 +118,23 @@ export function AuthProvider({ children }) {
     authApi.clearToken();
     setTokenState(null);
     setUser(null);
+    setAuthError(null);
   }
 
+  // ✅ THIS is where your useMemo block goes
   const value = useMemo(
     () => ({
       user,
       token,
       isLoading,
+      authError,
       isAuthenticated: Boolean(user && token),
       register,
       login,
       logout,
+      setAuthError, // optional: allows pages to set/clear messages
     }),
-    [user, token, isLoading]
+    [user, token, isLoading, authError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -79,8 +142,6 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used inside <AuthProvider>");
-  }
+  if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
   return ctx;
 }
