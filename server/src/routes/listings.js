@@ -1,6 +1,7 @@
 // server/src/routes/listings.js
 import express from "express";
 import pool from "../db/index.js";
+import requireAuth from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
@@ -104,7 +105,7 @@ router.get("/:id", async (req, res) => {
       WHERE l.id = $1 AND l.is_active = TRUE
       GROUP BY l.id;
     `,
-      [id]
+      [id],
     );
 
     if (result.rows.length === 0) {
@@ -121,6 +122,50 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error("Error fetching listing detail:", err);
     res.status(500).json({ message: "Error fetching listing" });
+  }
+});
+
+router.post("/", requireAuth, async (req, res) => {
+  try {
+    const sellerId = req.user.id;
+    const {
+      title,
+      price_cents,
+      condition,
+      category,
+      brand,
+      technical_specs,
+      image_url,
+    } = req.body;
+
+    if (!title || !price_cents || !category) {
+      return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    const result = await pool.query(
+      `
+      INSERT INTO listings
+      (seller_id, title, price_cents, condition, category, brand, technical_specs, image_url)
+      VALUES
+      ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *;
+      `,
+      [
+        sellerId,
+        title,
+        price_cents,
+        condition,
+        category,
+        brand,
+        technical_specs,
+        image_url,
+      ],
+    );
+
+    return res.status(201).json({ listing: result.rows[0] });
+  } catch (err) {
+    console.error("Create listing error:", err);
+    return res.status(500).json({ message: "Server error creating listing." });
   }
 });
 
