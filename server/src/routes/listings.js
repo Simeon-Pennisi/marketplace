@@ -232,4 +232,38 @@ SELECT seller_id FROM listings WHERE id = $1;
   }
 });
 
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    const listingId = req.params.id;
+    const userId = req.user.id;
+
+    const existing = await pool.query(
+      `
+SELECT seller_id FROM listings WHERE id = $1;
+      `,
+      [listingId],
+    );
+
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ message: "Listing not found." });
+    }
+
+    if (existing.rows[0].sellerId != userId) {
+      return res.status(403).json({ message: "Forbidden." });
+    }
+
+    await pool.query(
+      `
+DELETE FROM listings WHERE seller_id = $1;
+      `,
+      [listingId],
+    );
+
+    return res.status(204).send();
+  } catch (err) {
+    console.error("Delete listing error:", err);
+    return res.status(500).json({ message: "Server error deleting listing." });
+  }
+});
+
 export default router;
