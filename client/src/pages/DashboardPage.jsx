@@ -1,10 +1,26 @@
 // DashboardPage.jsx
+import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function DashboardPage() {
   const { user, logout, authNotice, authError } = useAuth();
 
   console.log("DashboardPage render:", { user, authNotice, authError });
+
+  useEffect(() => {
+    async function loadMyListings() {
+      const res = await fetch("http/localhost:4000/api/listings/mine", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      setListings(data.listings);
+    }
+
+    loadMyListings();
+  }, [token]);
 
   return (
     <div className="page dashboard-page">
