@@ -169,4 +169,67 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
+router.patch("/:id", requireAuth, async (req, res) => {
+  try {
+    const listingId = req.params.id;
+    const userId = req.user.id;
+
+    const existing = await pool.query(
+      `
+SELECT seller_id FROM listings WHERE id = $1;
+      `,
+      [listingId],
+    );
+
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ message: "Listing not found." });
+    }
+
+    if (existing.rows[0].sellerId != userId) {
+      return res.status(403).json({ message: "Forbidden." });
+    }
+
+    const {
+      title,
+      price_cents,
+      condition,
+      category,
+      brand,
+      technical_specs,
+      image_url,
+    } = req.body;
+
+    const updated = await pool.query(
+      `
+        UPDATE listings
+        SET
+        title = COALESCE($1, title),
+              price_cents = COALESCE($2, price_cents),
+      condition = COALESCE($3, condition),
+      category = COALESCE($4, category),
+      brand = COALESCE($5, brand),
+      technical_specs = COALESCE($6, technical_specs),
+      image_url = COALESCE($7, image_url)
+      WHERE id = $8
+      RETURNING *;
+      `,
+      [
+        title,
+        price_cents,
+        condition,
+        category,
+        brand,
+        technical_specs,
+        image_url,
+        listingId,
+      ],
+    );
+
+    return res.json({ listing: updated.rows[0] });
+  } catch (err) {
+    console.error("Update listing error:", err);
+    return res.status(500).json({ message: "Server error updating listing." });
+  }
+});
+
 export default router;
