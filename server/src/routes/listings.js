@@ -121,7 +121,28 @@ router.get("/:id", async (req, res) => {
     res.json({ listing });
   } catch (err) {
     console.error("Error fetching listing detail:", err);
-    res.status(500).json({ message: "Error fetching listing" });
+    res.status(500).json({ message: "Error fetching listing." });
+  }
+});
+
+router.get("/mine", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT *
+      FROM listings
+      WHERE seller_id = $1
+      ORDER BY created_at DESC;
+    `,
+      [req.user.id],
+    );
+
+    res.json({ listings: result.rows });
+  } catch (err) {
+    console.error("My listings error:", err);
+    res.status(500).json({ message: "Server error fetching listings." });
   }
 });
 
