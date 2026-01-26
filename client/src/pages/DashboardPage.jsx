@@ -9,11 +9,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function loadMyListings() {
+      if (!token) return;
+
       const res = await fetch("http/localhost:4000/api/listings/mine", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (!res.ok) {
+        console.log("Failed to load /mine:", res.status);
+        return;
+      }
 
       const data = await res.json();
       setListings(data.listings);
