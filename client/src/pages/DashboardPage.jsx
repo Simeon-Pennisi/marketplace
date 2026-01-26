@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function DashboardPage() {
-  const { user, logout, authNotice, authError } = useAuth();
+  const { user, token, logout, authNotice, authError } = useAuth();
 
   console.log("DashboardPage render:", { user, authNotice, authError });
 
@@ -31,7 +31,6 @@ export default function DashboardPage() {
       </p>
       {user?.name && <p>Name: {user.name}</p>}
 
-      {/* <button onClick={logout}>Logout</button> */}
       <button onClick={() => logout()}>Logout</button>
 
       <hr />
