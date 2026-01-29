@@ -195,13 +195,30 @@ router.post("/", requireAuth, async (req, res) => {
         .replace(/\s+/g, "_");
 
     const allowedConditions = new Set(["new", "like_new", "good", "fair"]);
-
     const conditionNorm = normalizeEnum(condition);
+
     if (condition && !allowedConditions.has(conditionNorm)) {
       return res.status(400).json({
         message: `Invalid condition. Use one of: ${Array.from(allowedConditions).join(", ")}.`,
       });
     }
+
+    const allowedCategories = new Set([
+      "monitor",
+      "laptop",
+      "audio",
+      "accessories",
+    ]);
+    const categoryNorm = normalizeEnum(category);
+
+    if (category && !allowedCategories.has(categoryNorm)) {
+      return res.status(400).json({
+        message: `Invalid category. Use one of: ${Array.from(allowedCategories).join(", ")}.`,
+      });
+    }
+
+    // I haven't tested this next 2 lines yet, so keep an eye on them
+    const conditionToSave = condition ? conditionNorm : null;
 
     const result = await pool.query(
       `
