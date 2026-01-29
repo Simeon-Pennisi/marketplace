@@ -101,6 +101,27 @@ router.get("/mine", requireAuth, async (req, res) => {
   }
 });
 
+// router.get("/mine", async (req, res) => {
+//   const { id } = req.params;
+
+//   try {
+//     const result = await pool.query(
+//       `
+//       SELECT *
+//       FROM listings
+//       WHERE seller_id = $1
+//       ORDER BY created_at DESC;
+//     `,
+//       [req.user.id],
+//     );
+
+//     res.json({ listings: result.rows });
+//   } catch (err) {
+//     console.error("My listings error:", err);
+//     res.status(500).json({ message: "Server error fetching listings." });
+//   }
+// });
+
 // GET /api/listings/:id
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
@@ -145,27 +166,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/mine", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await pool.query(
-      `
-      SELECT *
-      FROM listings
-      WHERE seller_id = $1
-      ORDER BY created_at DESC;
-    `,
-      [req.user.id],
-    );
-
-    res.json({ listings: result.rows });
-  } catch (err) {
-    console.error("My listings error:", err);
-    res.status(500).json({ message: "Server error fetching listings." });
-  }
-});
-
+// POST /api/listings/
 router.post("/", requireAuth, async (req, res) => {
   try {
     const sellerId = req.user.id;
@@ -181,6 +182,25 @@ router.post("/", requireAuth, async (req, res) => {
 
     if (!title || !price_cents || !category) {
       return res.status(400).json({ message: "Missing required fields." });
+    }
+
+    //     const price_cents = Math.round(Number(price) * 100);
+    // if (Number.isNaN(price_cents)) {
+    //   return res.status(400).json({ message: "Invalid price format." });
+
+    const normalizeEnum = (v) =>
+      String(v || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+
+    const allowedConditions = new Set(["new", "like_new", "good", "fair"]);
+
+    const conditionNorm = normalizeEnum(condition);
+    if (condition && !allowedConditions.has(conditionNorm)) {
+      return res.status(400).json({
+        message: `Invalid condition. Use one of: ${Array.from(allowedConditions).join(", ")}.`,
+      });
     }
 
     const result = await pool.query(
@@ -210,6 +230,7 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
+// PATCH /api/listings/:id
 router.patch("/:id", requireAuth, async (req, res) => {
   try {
     const listingId = req.params.id;
@@ -273,6 +294,7 @@ SELECT seller_id FROM listings WHERE id = $1;
   }
 });
 
+// DELETE /api/listings/:id
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const listingId = req.params.id;

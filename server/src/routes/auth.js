@@ -14,6 +14,7 @@ const normalizeEmail = (email) =>
     .toLowerCase();
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+// POST /api/auth/register
 router.post("/register", async (req, res) => {
   try {
     const name = String(req.body.name || "").trim();
@@ -35,7 +36,7 @@ router.post("/register", async (req, res) => {
 
     const existing = await pool.query(
       `SELECT id FROM users WHERE email = $1 LIMIT 1;`,
-      [email]
+      [email],
     );
     if (existing.rows.length)
       return res.status(409).json({ message: "Email is already registered." });
@@ -48,14 +49,14 @@ router.post("/register", async (req, res) => {
       VALUES ($1, $2, $3)
       RETURNING id, name, email, created_at;
       `,
-      [name || null, email, passwordHash]
+      [name || null, email, passwordHash],
     );
 
     const user = created.rows[0];
     const token = jwt.sign(
       { sub: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: JWT_EXPIRES_IN },
     );
 
     return res.status(201).json({ user, token });
@@ -67,6 +68,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// POST /api/auth/login
 router.post("/login", async (req, res) => {
   try {
     const email = normalizeEmail(req.body.email);
@@ -81,7 +83,7 @@ router.post("/login", async (req, res) => {
 
     const result = await pool.query(
       `SELECT id, name, email, password_hash FROM users WHERE email = $1 LIMIT 1;`,
-      [email]
+      [email],
     );
 
     if (!result.rows.length)
@@ -94,7 +96,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { sub: row.id, email: row.email },
       process.env.JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: JWT_EXPIRES_IN },
     );
     const user = { id: row.id, name: row.name, email: row.email };
 
@@ -105,6 +107,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// GET /api/auth/me
 router.get("/me", requireAuth, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -116,7 +119,7 @@ router.get("/me", requireAuth, async (req, res) => {
       WHERE id = $1
       LIMIT 1;
       `,
-      [userId]
+      [userId],
     );
 
     if (result.rows.length === 0) {
