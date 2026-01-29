@@ -243,6 +243,15 @@ router.post("/", requireAuth, async (req, res) => {
     return res.status(201).json({ listing: result.rows[0] });
   } catch (err) {
     console.error("Create listing error:", err);
+
+    if (err.code === "23514") {
+      return res
+        .status(400)
+        .json({
+          message: "Invalid value for one of the fields (check constraints).",
+        });
+    }
+
     return res.status(500).json({ message: "Server error creating listing." });
   }
 });
