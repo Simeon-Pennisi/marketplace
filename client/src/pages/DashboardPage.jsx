@@ -68,6 +68,15 @@ export default function DashboardPage() {
 
       <hr />
 
+      <CreateListingForm
+        onCreated={(listing) => {
+          // fastest UX: optimistic prepend
+          setMyListings((prev) => [listing, ...prev]);
+          // or call loadMyListings() if you want canonical reload:
+          // loadMyListings()
+        }}
+      />
+
       <h2>My listings</h2>
       {loadingMine ? (
         <p>Loading...</p>
