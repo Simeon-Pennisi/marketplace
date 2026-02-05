@@ -1,4 +1,4 @@
-export function requireOwner(req, res, next) {
+export default function requireOwner(req, res, next) {
   //   const userId = req.user.sub;
   const userId = Number(req.user.sub);
   const listing = req.listing;

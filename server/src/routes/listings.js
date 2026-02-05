@@ -1,7 +1,8 @@
 // server/src/routes/listings.js
 import express from "express";
 import pool from "../db/index.js";
-import { requireAuth, requireOwner } from "../middleware/requireAuth.js";
+import requireAuth from "../middleware/requireAuth.js";
+import requireOwner from "../middleware/requireOwner.js";
 
 const router = express.Router();
 
