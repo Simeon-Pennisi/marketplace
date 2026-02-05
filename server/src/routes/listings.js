@@ -180,8 +180,24 @@ router.post("/", requireAuth, async (req, res) => {
       image_url,
     } = req.body;
 
-    if (!title || !price_cents || !category) {
-      return res.status(400).json({ message: "Missing required fields." });
+    // if (!title || !price_cents || !category) {
+    //   return res.status(400).json({ message: "Missing required fields." });
+    // }
+
+    if (!title) {
+      return res.status(400).json({ message: "Missing required title." });
+    }
+
+    if (!price_cents) {
+      return res
+        .status(400)
+        .json({ message: "Missing required price in cents." });
+    }
+
+    if (!category) {
+      return res
+        .status(400)
+        .json({ message: "Missing required allowable category." });
     }
 
     //     const price_cents = Math.round(Number(price) * 100);
@@ -217,7 +233,7 @@ router.post("/", requireAuth, async (req, res) => {
       });
     }
 
-    // I haven't tested this next 2 lines yet, so keep an eye on them
+    // I haven't tested conditionToSave yet, so keep an eye on it
     const conditionToSave = condition ? conditionNorm : null;
 
     const result = await pool.query(
@@ -245,11 +261,9 @@ router.post("/", requireAuth, async (req, res) => {
     console.error("Create listing error:", err);
 
     if (err.code === "23514") {
-      return res
-        .status(400)
-        .json({
-          message: "Invalid value for one of the fields (check constraints).",
-        });
+      return res.status(400).json({
+        message: "Invalid value for one of the fields (check constraints).",
+      });
     }
 
     return res.status(500).json({ message: "Server error creating listing." });
