@@ -1,7 +1,7 @@
 // server/src/routes/listings.js
 import express from "express";
 import pool from "../db/index.js";
-import requireAuth from "../middleware/requireAuth.js";
+import { requireAuth, requireOwner } from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
@@ -180,14 +180,9 @@ router.post("/", requireAuth, async (req, res) => {
       image_url,
     } = req.body;
 
-    // if (!title || !price_cents || !category) {
-    //   return res.status(400).json({ message: "Missing required fields." });
-    // }
-
     if (!title) {
       return res.status(400).json({ message: "Missing required title." });
     }
-
     if (!price_cents) {
       return res
         .status(400)
@@ -199,10 +194,6 @@ router.post("/", requireAuth, async (req, res) => {
         .status(400)
         .json({ message: "Missing required allowable category." });
     }
-
-    //     const price_cents = Math.round(Number(price) * 100);
-    // if (Number.isNaN(price_cents)) {
-    //   return res.status(400).json({ message: "Invalid price format." });
 
     const normalizeEnum = (v) =>
       String(v || "")
@@ -271,7 +262,7 @@ router.post("/", requireAuth, async (req, res) => {
 });
 
 // PATCH /api/listings/:id
-router.patch("/:id", requireAuth, async (req, res) => {
+router.patch("/:id", requireAuth, requireOwner, async (req, res) => {
   try {
     const listingId = req.params.id;
     const userId = req.user.id;
@@ -335,7 +326,7 @@ SELECT seller_id FROM listings WHERE id = $1;
 });
 
 // DELETE /api/listings/:id
-router.delete("/:id", requireAuth, async (req, res) => {
+router.delete("/:id", requireAuth, requireOwner, async (req, res) => {
   try {
     const listingId = req.params.id;
     const userId = req.user.id;
