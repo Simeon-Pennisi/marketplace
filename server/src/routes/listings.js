@@ -82,27 +82,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// router.get("/mine", async (req, res) => {
-//   const { id } = req.params;
-
-//   try {
-//     const result = await pool.query(
-//       `
-//       SELECT *
-//       FROM listings
-//       WHERE seller_id = $1
-//       ORDER BY created_at DESC;
-//     `,
-//       [req.user.id],
-//     );
-
-//     res.json({ listings: result.rows });
-//   } catch (err) {
-//     console.error("My listings error:", err);
-//     res.status(500).json({ message: "Server error fetching listings." });
-//   }
-// });
-
 // GET /api/listings/:id
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
@@ -184,6 +163,7 @@ router.post("/", requireAuth, async (req, res) => {
     if (!title) {
       return res.status(400).json({ message: "Missing required title." });
     }
+
     if (!price_cents) {
       return res
         .status(400)
@@ -217,6 +197,7 @@ router.post("/", requireAuth, async (req, res) => {
       "audio",
       "accessories",
     ]);
+
     const categoryNorm = normalizeEnum(category);
 
     if (category && !allowedCategories.has(categoryNorm)) {
@@ -225,23 +206,31 @@ router.post("/", requireAuth, async (req, res) => {
       });
     }
 
-    // I haven't tested conditionToSave yet, so keep an eye on it
     const conditionToSave = condition ? conditionNorm : null;
+    const categoryToSave = category ? categoryNorm : null;
+
+    // Insert this once you get basic functionality
+    // const priceCentsNum = Number(price_cents);
+    // if (!Number.isInteger(priceCentsNum) || priceCentsNum <= 0) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "price_cents must be a positive integer." });
+    // }
 
     const result = await pool.query(
       `
-      INSERT INTO listings
-      (seller_id, title, price_cents, condition, category, brand, technical_specs, image_url)
-      VALUES
-      ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING *;
-      `,
+  INSERT INTO listings
+  (seller_id, title, price_cents, condition, category, brand, technical_specs, image_url)
+  VALUES
+  ($1, $2, $3, $4, $5, $6, $7, $8)
+  RETURNING *;
+  `,
       [
         sellerId,
         title,
         price_cents,
-        condition,
-        category,
+        conditionToSave, // ✅ normalized
+        categoryToSave, // ✅ normalized
         brand,
         technical_specs,
         image_url,
