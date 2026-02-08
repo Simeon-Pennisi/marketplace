@@ -317,6 +317,13 @@ SELECT seller_id FROM listings WHERE id = $1;
     return res.json({ listing: updated.rows[0] });
   } catch (err) {
     console.error("Update listing error:", err);
+
+    if (err.code === "23514") {
+      return res
+        .status(400)
+        .json({ message: "Invalid enum value for condition or category." });
+    }
+
     return res.status(500).json({ message: "Server error updating listing." });
   }
 });
