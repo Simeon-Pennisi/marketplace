@@ -288,6 +288,48 @@ SELECT seller_id FROM listings WHERE id = $1;
       image_url,
     } = req.body;
 
+    //
+    const normalizeEnum = (v) =>
+      String(v || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+
+    const allowedConditions = new Set(["new", "like_new", "good", "fair"]);
+    const conditionNorm = normalizeEnum(condition);
+
+    if (condition && !allowedConditions.has(conditionNorm)) {
+      return res.status(400).json({
+        message: `Invalid condition. Use one of: ${Array.from(allowedConditions).join(", ")}.`,
+      });
+    }
+
+    const allowedCategories = new Set([
+      "monitor",
+      "laptop",
+      "audio",
+      "accessories",
+    ]);
+    const categoryNorm = normalizeEnum(category);
+
+    if (category && !allowedCategories.has(categoryNorm)) {
+      return res.status(400).json({
+        message: `Invalid category. Use one of: ${Array.from(allowedCategories).join(", ")}.`,
+      });
+    }
+
+    const conditionToSave = condition ? conditionNorm : null;
+    const categoryToSave = category ? categoryNorm : null;
+
+    // Insert this once you get basic functionality
+    const priceCentsNum = Number(price_cents);
+    if (!Number.isInteger(priceCentsNum) || priceCentsNum <= 0) {
+      return res
+        .status(400)
+        .json({ message: "price_cents must be a positive integer." });
+    }
+    //
+
     const updated = await pool.query(
       `
         UPDATE listings
@@ -305,8 +347,8 @@ SELECT seller_id FROM listings WHERE id = $1;
       [
         title,
         price_cents,
-        condition,
-        category,
+        conditionToSave, // ✅ normalized
+        categoryToSave, // ✅ normalized
         brand,
         technical_specs,
         image_url,
