@@ -210,12 +210,12 @@ router.post("/", requireAuth, async (req, res) => {
     const categoryToSave = category ? categoryNorm : null;
 
     // Insert this once you get basic functionality
-    // const priceCentsNum = Number(price_cents);
-    // if (!Number.isInteger(priceCentsNum) || priceCentsNum <= 0) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "price_cents must be a positive integer." });
-    // }
+    const priceCentsNum = Number(price_cents);
+    if (!Number.isInteger(priceCentsNum) || priceCentsNum <= 0) {
+      return res
+        .status(400)
+        .json({ message: "price_cents must be a positive integer." });
+    }
 
     const result = await pool.query(
       `
@@ -253,9 +253,12 @@ router.post("/", requireAuth, async (req, res) => {
 
 // PATCH /api/listings/:id
 router.patch("/:id", requireAuth, requireOwner, async (req, res) => {
+  // I'm temporarily removing 'requireOwner'
   try {
     const listingId = req.params.id;
     const userId = req.user.id;
+
+    console.log(userId);
 
     const existing = await pool.query(
       `
@@ -268,9 +271,12 @@ SELECT seller_id FROM listings WHERE id = $1;
       return res.status(404).json({ message: "Listing not found." });
     }
 
-    if (existing.rows[0].sellerId != userId) {
+    if (Number(existing.rows[0].seller_id) !== Number(userId)) {
       return res.status(403).json({ message: "Forbidden." });
     }
+    // if (existing.rows[0].sellerId != userId) {
+    //   return res.status(403).json({ message: "Forbidden." });
+    // }
 
     const {
       title,
@@ -286,8 +292,8 @@ SELECT seller_id FROM listings WHERE id = $1;
       `
         UPDATE listings
         SET
-        title = COALESCE($1, title),
-              price_cents = COALESCE($2, price_cents),
+      title = COALESCE($1, title),
+      price_cents = COALESCE($2, price_cents),
       condition = COALESCE($3, condition),
       category = COALESCE($4, category),
       brand = COALESCE($5, brand),
