@@ -258,8 +258,6 @@ router.patch("/:id", requireAuth, requireOwner, async (req, res) => {
     const listingId = req.params.id;
     const userId = req.user.id;
 
-    console.log(userId);
-
     const existing = await pool.query(
       `
 SELECT seller_id FROM listings WHERE id = $1;
@@ -268,7 +266,9 @@ SELECT seller_id FROM listings WHERE id = $1;
     );
 
     if (existing.rows.length === 0) {
-      return res.status(404).json({ message: "Listing not found." });
+      return res
+        .status(404)
+        .json({ message: "Listing not found. PATCH route" });
     }
 
     if (Number(existing.rows[0].seller_id) !== Number(userId)) {
