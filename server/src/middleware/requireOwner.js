@@ -4,8 +4,6 @@ export default async function requireOwner(req, res, next) {
   try {
     const listingId = Number(req.params.id);
     const userId = Number(req.user.id);
-    // it breaks if you remove this
-    const sellerId = req.params.seller_id;
 
     if (!Number.isInteger(listingId)) {
       return res.status(400).json({ message: "Invalid listing id." });
