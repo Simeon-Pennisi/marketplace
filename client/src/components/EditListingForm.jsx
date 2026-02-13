@@ -119,14 +119,45 @@ export default function EditListingForm({ listing, onSaved, onCancel }) {
         body: JSON.stringify(payload),
       });
 
+      // Try to parse JSON if present (some responses may be empty)
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
         const msg = data?.message || `Update failed (${res.status})`;
         throw new Error(msg);
+      } else if (res.ok) {
+        onSaved?.(data?.listing ?? null);
+        return;
+      }
+      // if 'else if' does not work
+      // onSaved?.(data.listing);
+
+      // Status specific UX
+      if (res.status === 400) {
+        setError(data?.message || "Invalid input. Please check input fields.");
+        return;
       }
 
-      onSaved?.(data.listing);
+      if (res.status === 401) {
+        setError("Your session has expired. Please log in again.");
+        // Optional force logout/redirect
+        return;
+      }
+
+      if (res.status === 403) {
+        setError("Forbidden: Only the seller may edit a listing.");
+        return;
+      }
+
+      if (res.status === 404) {
+        setError(
+          "This listing no longer exists. Confirm listing id or contact admin to restore.",
+        );
+        return;
+      }
+
+      // Fallback
+      setError(data?.message || `Update failed (${res.status})`);
     } catch (err) {
       setError(err.message || "Update failed.");
     } finally {
