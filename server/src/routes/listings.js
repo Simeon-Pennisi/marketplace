@@ -139,7 +139,7 @@ router.get("/mine", requireAuth, async (req, res) => {
       [req.user.id],
     );
 
-    return res.json({ listsings: result.rows });
+    return res.json({ listings: result.rows });
   } catch (err) {
     console.error("My listings error:", err);
     res.status(500).json({ message: "Server error fetching listings." });
