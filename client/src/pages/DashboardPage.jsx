@@ -8,49 +8,76 @@ import { API_BASE_URL } from "../config.js";
 export default function DashboardPage() {
   const { user, token, logout, authNotice, authError } = useAuth();
 
-  console.log("DashboardPage render:", { user, authNotice, authError });
+  console.log("DashboardPage render:", {
+    user,
+    authNotice,
+    authError,
+    API_BASE_URL,
+  });
 
   const [myListings, setMyListings] = useState([]);
   const [editingListing, setEditingListing] = useState(null);
   const [loadingMine, setLoadingMine] = useState(true);
+  const [myError, setMyError] = useState(null);
 
   async function loadMyListings() {
     if (!token) return;
 
     setLoadingMine(true);
+    setMyError(null);
+
     try {
       const res = await fetch(`${API_BASE_URL}/listings/mine`, {
-        headers: { Authorization: "Bearer ${token}" },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      const data = await res.json();
-      if (!res.ok)
-        throw new Error(data?.message || "Failed to load my listings.");
+      const data = await res.json().catch(() => null);
 
-      setMyListings(data.listings);
-    } catch (e) {
-      console.error(e);
+      if (!res.ok) {
+        throw new Error(
+          data?.message || `Failed to load my listings. (${res.status})`,
+        );
+      }
+
+      setMyListings(data?.listings ?? []);
+    } catch (err) {
+      setMyError(err.message);
+      setMyListings([]);
+      console.error(err);
     } finally {
       setLoadingMine(false);
     }
+    //
+    // const res = await fetch("http/localhost:4000/api/listings/mine", {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
 
-    const res = await fetch("http/localhost:4000/api/listings/mine", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // useEffect(() => {
+    //   if (!token) return;
+    //   loadMyListings();
+    //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [token]);
+    // // ...render below the useEffect
 
-    if (!res.ok) {
-      console.log("Failed to load /mine:", res.status);
-      return;
-    }
+    // if (!res.ok) {
+    //   console.log("Failed to load /mine:", res.status);
+    //   return;
+    // }
 
-    const data = await res.json();
-    // setListings(data.listings);
-    setMyListings(data.listings);
+    // const data = await res.json();
+    // // setListings(data.listings);
+    // setMyListings(data.listings);
+    // //
   }
 
   useEffect(() => {
+    if (!token) {
+      setLoadingMine(false);
+      setMyListings([]);
+      return;
+    }
     loadMyListings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
@@ -58,22 +85,20 @@ export default function DashboardPage() {
   return (
     <div className="page dashboard-page">
       <h1>Seller Dashboard</h1>
+
       {authNotice && <p className="notice">{authNotice}</p>}
       {authError && <p className="error">{authError}</p>}
+      {myError && <p className="error">{myError}</p>}
+
       <p>
         Signed in as: <strong>{user?.email}</strong>
       </p>
+      {/* keep an eye on next line */}
       {user?.name && <p>Name: {user.name}</p>}
       <button onClick={() => logout()}>Logout</button>
+
       <hr />
-      <CreateListingForm
-        onCreated={(listing) => {
-          // fastest UX: optimistic prepend
-          setMyListings((prev) => [listing, ...prev]);
-          // or call loadMyListings() if you want canonical reload:
-          // loadMyListings()
-        }}
-      />
+      <CreateListingForm onCreated={(listing) => loadMyListings()} />
 
       {editingListing && (
         <>
@@ -81,18 +106,25 @@ export default function DashboardPage() {
           <EditListingForm
             listing={editingListing}
             onCancel={() => setEditingListing(null)}
-            onSaved={(updated) => {
-              // update in-place
-              setMyListings((prev) =>
-                prev.map((l) => (l.id === updated.id ? updated : l)),
-              );
+            onSaved={() => {
               setEditingListing(null);
+              loadMyListings();
             }}
+            //
+            // onSaved={(updated) => {
+            //   // update in-place
+            //   setMyListings((prev) =>
+            //     prev.map((l) => (l.id === updated.id ? updated : l)),
+            //   );
+            //   setEditingListing(null);
+            // }
+            //
           />
         </>
       )}
 
       <h2>My listings</h2>
+
       {loadingMine ? (
         <p>Loading...</p>
       ) : myListings.length === 0 ? (

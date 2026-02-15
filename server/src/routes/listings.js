@@ -139,6 +139,10 @@ router.get("/:id", async (req, res) => {
       price: row.price_cents / 100,
     };
 
+    const listingId = Number(req.params.id);
+    if (!Number.isInteger(listingId))
+      return res.status(400).json({ message: "Listing id must be a number." });
+
     res.json({ listing });
   } catch (err) {
     console.error("Error fetching listing detail:", err);
