@@ -257,7 +257,6 @@ router.post("/", requireAuth, async (req, res) => {
 
 // PATCH /api/listings/:id
 router.patch("/:id", requireAuth, requireOwner, async (req, res) => {
-  // I'm temporarily removing 'requireOwner'
   try {
     const listingId = req.params.id;
     const userId = req.user.id;
@@ -278,9 +277,6 @@ SELECT seller_id FROM listings WHERE id = $1;
     if (Number(existing.rows[0].seller_id) !== Number(userId)) {
       return res.status(403).json({ message: "Forbidden." });
     }
-    // if (existing.rows[0].sellerId != userId) {
-    //   return res.status(403).json({ message: "Forbidden." });
-    // }
 
     const {
       title,
@@ -376,6 +372,12 @@ SELECT seller_id FROM listings WHERE id = $1;
 
 // DELETE /api/listings/:id
 router.delete("/:id", requireAuth, requireOwner, async (req, res) => {
+  console.log(
+    "DELETE handler reached for id:",
+    req.params.id,
+    "user:",
+    req.user,
+  );
   try {
     const listingId = req.params.id;
     const userId = req.user.id;
@@ -389,10 +391,6 @@ SELECT seller_id FROM listings WHERE id = $1;
 
     if (existing.rows.length === 0) {
       return res.status(404).json({ message: "Listing not found." });
-    }
-
-    if (existing.rows[0].sellerId != userId) {
-      return res.status(403).json({ message: "Forbidden." });
     }
 
     await pool.query(

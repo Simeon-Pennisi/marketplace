@@ -1,3 +1,4 @@
+// requireAuth
 import jwt from "jsonwebtoken";
 
 export default function requireAuth(req, res, next) {

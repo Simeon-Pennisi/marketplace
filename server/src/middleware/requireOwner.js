@@ -1,3 +1,4 @@
+// requireOwner
 import pool from "../db/index.js";
 
 export default async function requireOwner(req, res, next) {
@@ -20,12 +21,13 @@ export default async function requireOwner(req, res, next) {
         .json({ message: "Listing not found. requireOwner" });
     }
 
-    const { seller_id } = result.rows[0];
+    const seller_id = Number(result.rows[0].seller_id);
 
-    if (Number(seller_id) !== userId) {
-      return res.status(403).json({ message: "Forbidden. requireOwner" });
+    if (seller_id !== userId) {
+      return res.status(403).json({ message: "Forbidden." });
     }
 
+    console.log("requireOwner: authorized, calling next()");
     return next();
   } catch (err) {
     console.error("requireOwner error:", err);
