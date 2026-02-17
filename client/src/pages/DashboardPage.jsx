@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import CreateListingForm from "../components/CreateListingForm.jsx";
 import EditListingForm from "../components/EditListingForm.jsx";
 import { API_BASE_URL } from "../config.js";
+import DeleteListingForm from "../components/DeleteListingForm.jsx";
 
 export default function DashboardPage() {
   const { user, token, logout, authNotice, authError } = useAuth();
@@ -17,6 +18,7 @@ export default function DashboardPage() {
 
   const [myListings, setMyListings] = useState([]);
   const [editingListing, setEditingListing] = useState(null);
+  const [deleteListing, setDeleteListing] = useState(null);
   const [loadingMine, setLoadingMine] = useState(true);
   const [myError, setMyError] = useState(null);
 
@@ -110,17 +112,19 @@ export default function DashboardPage() {
               setEditingListing(null);
               loadMyListings();
             }}
-            //
-            // onSaved={(updated) => {
-            //   // update in-place
-            //   setMyListings((prev) =>
-            //     prev.map((l) => (l.id === updated.id ? updated : l)),
-            //   );
-            //   setEditingListing(null);
-            // }
-            //
           />
         </>
+      )}
+
+      {deleteListing && (
+        <DeleteListingForm
+          listing={deleteListing}
+          onCancel={() => setDeleteListing(null)}
+          onDeleted={(deletedId) => {
+            setMyListings((prev) => prev.filter((x) => x.id !== deletedId));
+            setDeleteListing(null);
+          }}
+        />
       )}
 
       <h2>My listings</h2>
@@ -142,6 +146,10 @@ export default function DashboardPage() {
 
               <button type="button" onClick={() => setEditingListing(l)}>
                 Edit
+              </button>
+
+              <button type="button" onClick={() => setDeleteListing(l)}>
+                Delete
               </button>
             </li>
           ))}
