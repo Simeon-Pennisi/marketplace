@@ -6,7 +6,7 @@ Full-stack marketplace demo for used/refurbished tech gear.
 
 Base URL:
 
-- https://marketplace-demo-lx2a.onrender.com
+https://marketplace-demo-lx2a.onrender.com
 
 ### Health
 

@@ -4,7 +4,8 @@ const isProd = process.env.NODE_ENV === "production";
 
 // Only loading .env locally
 if (!isProd) {
-  await import("dotenv/config");
+  // eslint-disable-next-line no-unused-vars
+  const dotenv = await import("dotenv/config");
 }
 
 const connectionString = process.env.DATABASE_URL;
