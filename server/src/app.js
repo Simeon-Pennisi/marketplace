@@ -7,21 +7,32 @@ import authRouter from "./routes/auth.js";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://marketplace-client-cvgy.onrender.com",
+];
+
 // CORS configuration
-
-// app.use(cors()); // the dev only version
-
+// app.use(cors()); // is the dev only version
 app.use(
   cors({
     // here is the deployment version
-    origin: [
-      "http://localhost:5173",
-      "https://marketplace-demo-lx2a.onrender.com",
-    ],
+    origin(origin, callback) {
+      // allow non-browser requests
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked for origin ${origin}`));
+    },
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+
+app.options("*", cors());
 
 app.use(express.json());
 
