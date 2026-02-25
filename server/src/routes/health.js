@@ -8,6 +8,9 @@ router.get("/", async (req, res) => {
     const nowResult = await pool.query("SELECT NOW() as now");
     res.json({
       status: "ok",
+      // check JWT
+      jwtConfigured: Boolean(process.env.JWT_SECRET),
+      nodeEnv: process.env.NODE_ENV,
       message: "TechMarket API is healthy",
       time: nowResult.rows[0].now,
     });
