@@ -6,7 +6,7 @@ import requireAuth from "../middleware/requireAuth.js";
 
 const router = express.Router();
 
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "45s";
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "15m";
 
 const normalizeEmail = (email) =>
   String(email || "")
