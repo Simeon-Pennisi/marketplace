@@ -70,34 +70,28 @@ async function createTables() {
   await pool.query(query);
 }
 
-// async function seedUsers() {
-//   await pool.query(
-//     `
-//     INSERT INTO users (name, email, password_hash)
-//     VALUES
-//       ('Alice Seller', 'alice@example.com', 'demo-hash'),
-//       ('Bob Buyer', 'bob@example.com', 'demo-hash')
-//     ON CONFLICT (email) DO NOTHING;
-//   `,
-//   );
-// }
-
 async function upsertUsers({ name, email, password }) {
   const password_hash = await bcrypt.hash(password, 10);
+  const emailNorm = email.toLowerCase().trim();
 
-  const result = await pool.query(
+  const inserted = await pool.query(
     `
     INSERT INTO users (name, email, password_hash)
     VALUES ($1, $2, $3)
-    ON CONFLICT (email)
-    DO NOTHING
-    name = EXCLUDED.name
+    ON CONFLICT (email) DO NOTHING
     RETURNING id, name, email;
     `,
-    [name, email.toLowerCase().trim(), password_hash],
+    [name, emailNorm, password_hash],
   );
 
-  return result.rows[0];
+  if (inserted.rows[0]) return inserted.rows[0];
+
+  const existing = await pool.query(
+    `SELECT id, name, email FROM users WHERE email = $1 LIMIT 1;`,
+    [emailNorm],
+  );
+
+  return existing.rows[0];
 }
 
 async function getUserByEmail(email) {
