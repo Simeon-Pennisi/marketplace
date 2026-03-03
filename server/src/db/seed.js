@@ -72,26 +72,21 @@ async function createTables() {
 
 async function upsertUsers({ name, email, password }) {
   const password_hash = await bcrypt.hash(password, 10);
-  const emailNorm = email.toLowerCase().trim();
 
-  const inserted = await pool.query(
+  const result = await pool.query(
     `
     INSERT INTO users (name, email, password_hash)
     VALUES ($1, $2, $3)
-    ON CONFLICT (email) DO NOTHING
+    ON CONFLICT (email) DO UPDATE
+    SET
+      name = EXCLUDED.name,
+      password_hash = EXCLUDED.password_hash
     RETURNING id, name, email;
     `,
-    [name, emailNorm, password_hash],
+    [name, email.toLowerCase().trim(), password_hash],
   );
 
-  if (inserted.rows[0]) return inserted.rows[0];
-
-  const existing = await pool.query(
-    `SELECT id, name, email FROM users WHERE email = $1 LIMIT 1;`,
-    [emailNorm],
-  );
-
-  return existing.rows[0];
+  return result.rows[0];
 }
 
 async function getUserByEmail(email) {
