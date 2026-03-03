@@ -70,17 +70,17 @@ async function createTables() {
   await pool.query(query);
 }
 
-async function seedUsers() {
-  await pool.query(
-    `
-    INSERT INTO users (name, email, password_hash)
-    VALUES
-      ('Alice Seller', 'alice@example.com', 'demo-hash'),
-      ('Bob Buyer', 'bob@example.com', 'demo-hash')
-    ON CONFLICT (email) DO NOTHING;
-  `,
-  );
-}
+// async function seedUsers() {
+//   await pool.query(
+//     `
+//     INSERT INTO users (name, email, password_hash)
+//     VALUES
+//       ('Alice Seller', 'alice@example.com', 'demo-hash'),
+//       ('Bob Buyer', 'bob@example.com', 'demo-hash')
+//     ON CONFLICT (email) DO NOTHING;
+//   `,
+//   );
+// }
 
 async function upsertUsers({ name, email, password }) {
   const password_hash = await bcrypt.hash(password, 10);
@@ -90,7 +90,7 @@ async function upsertUsers({ name, email, password }) {
     INSERT INTO users (name, email, password_hash)
     VALUES ($1, $2, $3)
     ON CONFLICT (email)
-    DO UPDATE SET
+    DO NOTHING
     name = EXCLUDED.name
     RETURNING id, name, email;
     `,
