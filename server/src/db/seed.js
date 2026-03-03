@@ -1,5 +1,6 @@
 // schema and seed data
 import pool from "./index.js";
+import bcrypt from "bcryptjs";
 
 async function createTables() {
   const query = `
@@ -77,14 +78,32 @@ async function seedUsers() {
       ('Alice Seller', 'alice@example.com', 'demo-hash'),
       ('Bob Buyer', 'bob@example.com', 'demo-hash')
     ON CONFLICT (email) DO NOTHING;
-  `
+  `,
   );
+}
+
+async function upsertUsers({ name, email, password }) {
+  const password_hash = await bcrypt.hash(password, 10);
+
+  const result = await pool.query(
+    `
+    INSERT INTO users (name, email, password_hash)
+    VALUES ($1, $2, $3)
+    ON CONFLICT (email)
+    DO UPDATE SET
+    name = EXCLUDED.name
+    RETURNING id, name, email;
+    `,
+    [name, email.toLowerCase().trim(), password_hash],
+  );
+
+  return result.rows[0];
 }
 
 async function getUserByEmail(email) {
   const result = await pool.query(
     `SELECT id FROM users WHERE email = $1 LIMIT 1;`,
-    [email]
+    [email],
   );
   return result.rows[0];
 }
@@ -107,14 +126,14 @@ async function seedListings(sellerId) {
         'https://placehold.co/400x300?text=Headphones')
     ON CONFLICT DO NOTHING;
   `,
-    [sellerId]
+    [sellerId],
   );
 }
 
 async function seedFavoritesAndReviews(buyerId) {
   // Get some listings
   const listingsResult = await pool.query(
-    `SELECT id FROM listings ORDER BY id LIMIT 3;`
+    `SELECT id FROM listings ORDER BY id LIMIT 3;`,
   );
   const listings = listingsResult.rows;
 
@@ -129,7 +148,7 @@ async function seedFavoritesAndReviews(buyerId) {
     VALUES ($1, $2)
     ON CONFLICT DO NOTHING;
   `,
-    [buyerId, firstListingId]
+    [buyerId, firstListingId],
   );
 
   // Bob leaves a review on first listing
@@ -139,14 +158,14 @@ async function seedFavoritesAndReviews(buyerId) {
     VALUES ($1, $2, 5, 'Great condition, works perfectly!')
     ON CONFLICT (listing_id, user_id) DO NOTHING;
   `,
-    [firstListingId, buyerId]
+    [firstListingId, buyerId],
   );
 }
 
 async function seedOrders(buyerId) {
   // Grab two listings
   const listingsResult = await pool.query(
-    `SELECT id, price_cents FROM listings ORDER BY id LIMIT 2;`
+    `SELECT id, price_cents FROM listings ORDER BY id LIMIT 2;`,
   );
   const listings = listingsResult.rows;
   if (listings.length === 0) return;
@@ -166,7 +185,7 @@ async function seedOrders(buyerId) {
     VALUES ($1, $2, $3, $4, $5, 'paid_simulated')
     RETURNING id;
   `,
-    [buyerId, subtotal, tax, shipping, total]
+    [buyerId, subtotal, tax, shipping, total],
   );
 
   const orderId = orderResult.rows[0].id;
@@ -179,7 +198,7 @@ async function seedOrders(buyerId) {
       ($1, $2, 1, $3, $3),
       ($1, $4, 1, $5, $5);
   `,
-    [orderId, item1.id, item1.price_cents, item2.id, item2.price_cents]
+    [orderId, item1.id, item1.price_cents, item2.id, item2.price_cents],
   );
 }
 
@@ -190,7 +209,26 @@ async function main() {
     console.log("✅ Tables ready.");
 
     console.log("⏳ Seeding users...");
-    await seedUsers();
+    const demo = await upsertUsers({
+      name: "Demo User",
+      email: "demo@techmarket.dev",
+      password: "DemoUser2026!",
+    });
+    console.log("✅ Demo user ready:", demo.email);
+
+    // await seedUsers(); // reomve after upserUsers is functional
+    await upsertUsers({
+      name: "Alice Seller",
+      email: "alice@example.com",
+      password: "AlicePass2026!",
+    });
+
+    await upsertUsers({
+      name: "Bob Buyer",
+      email: "bob@example.com",
+      password: "BobPass2026!",
+    });
+
     console.log("✅ Users seeded.");
 
     const seller = await getUserByEmail("alice@example.com");
