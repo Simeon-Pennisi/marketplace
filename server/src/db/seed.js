@@ -225,8 +225,8 @@ async function main() {
 
     console.log("✅ Users seeded.");
 
-    const seller = await getUserByEmail("alice@example.com");
-    const buyer = await getUserByEmail("bob@example.com");
+    // const seller = await getUserByEmail("alice@example.com");
+    // const buyer = await getUserByEmail("bob@example.com");
 
     if (!seller || !buyer) {
       throw new Error("Expected demo users not found after seeding.");
