@@ -210,14 +210,14 @@ async function main() {
     });
     console.log("✅ Demo user ready:", demo.email);
 
-    // await seedUsers(); // reomve after upserUsers is functional
-    await upsertUsers({
+    // await seedUsers(); // remove after upserUsers is functional
+    const seller = await upsertUsers({
       name: "Alice Seller",
       email: "alice@example.com",
       password: "AlicePass2026!",
     });
 
-    await upsertUsers({
+    const buyer = await upsertUsers({
       name: "Bob Buyer",
       email: "bob@example.com",
       password: "BobPass2026!",
