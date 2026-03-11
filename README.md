@@ -185,9 +185,11 @@ D --> E
 D --> F
 E --> G
 F --> G
+```
 
 ## Data Model
 
+```mermaid
 erDiagram
 
 USERS {
