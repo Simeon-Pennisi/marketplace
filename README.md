@@ -67,6 +67,8 @@ These accounts are seeded automatically.
 - environment-based configuration
 - idempotent seed scripts
 
+---
+
 <p></p>
 
 # Tech Stack
@@ -118,6 +120,8 @@ PostgreSQL (Render managed)
 - cascade deletes
 - enum validation
 - composite uniqueness rules
+
+---
 
 <p></p>
 
@@ -224,6 +228,10 @@ LISTINGS ||--o{ REVIEWS : reviewed
 ORDERS ||--o{ ORDER_ITEMS : contains
 LISTINGS ||--o{ ORDER_ITEMS : purchased
 
+---
+
+<p></p>
+
 ## API Endpoints
 
 ### Public
@@ -309,9 +317,11 @@ curl -i -X DELETE https://marketplace-demo-lx2a.onrender.com/api/listings/LISTIN
   -H "Authorization: Bearer $TOKEN"
 ```
 
-## Local Development
+---
 
-#### Clone repository
+# Local Development
+
+### Clone repository
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/marketplace
@@ -360,6 +370,10 @@ Frontend requires
 VITE_API_BASE_URL
 ```
 
+---
+
+<p></p>
+
 ## Redeployment Instructions
 
 This project is designed for easy redeployment.
@@ -370,6 +384,10 @@ This project is designed for easy redeployment.
 4. Deploy frontend static site
 5. Run seed script
 
+---
+
+<p></p>
+
 ## Security Features
 
 - JWT authentication
@@ -377,6 +395,10 @@ This project is designed for easy redeployment.
 - ownership-based authorization
 - strict CORS configuration
 - environment variable secrets
+
+---
+
+<p></p>
 
 ## Engineering Highlights
 
@@ -386,6 +408,10 @@ This project is designed for easy redeployment.
 - normalized relational schema
 - production deployment pipeline
 
+---
+
+<p></p>
+
 ## Future Improvements
 
 - [ ] payment integration
@@ -393,6 +419,10 @@ This project is designed for easy redeployment.
 - [ ] search and filtering
 - [ ] pagination
 - [ ] seller analytics
+
+---
+
+<p></p>
 
 ## License
 
