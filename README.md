@@ -2,11 +2,24 @@
 
 ### Full-Stack Marketplace Demo (PERN Stack)
 
-A production-style marketplace application built with the PERN stack (PostgreSQL, Express, React, Node.js) demonstrating authenticated CRUD operations, relational data modeling, ownership-based authorization, and cloud deployment.
+[![React](https://img.shields.io/badge/React-19-blue?logo=react)]()
+[![Node.js](https://img.shields.io/badge/Node.js-Backend-green?logo=node.js)]()
+[![Express](https://img.shields.io/badge/Express-API-black?logo=express)]()
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql)]()
+[![JWT](https://img.shields.io/badge/Auth-JWT-orange?logo=jsonwebtokens)]()
+[![Render](https://img.shields.io/badge/Deployment-Render-purple)]()
+[![License](https://img.shields.io/badge/License-MIT-lightgrey)]()
+
+![GitHub repo size](https://img.shields.io/github/repo-size/simeonpennisi/marketplace)
+![GitHub last commit](https://img.shields.io/github/last-commit/simeonpennisi/marketplace)
+
+Production-style full-stack marketplace demonstrating authentication, ownership-based authorization, relational data modeling, and cloud deployment.
 
 This project focuses on backend architecture, API design, and secure full-stack integration, rather than purely UI features.
 
 ## Live Demo
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://marketplace-client-cvgy.onrender.com)
 
 Frontend  
 https://marketplace-client-cvgy.onrender.com
