@@ -10,16 +10,16 @@
 [![Render](https://img.shields.io/badge/Deployment-Render-purple)]()
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)]()
 
-![GitHub repo size](https://img.shields.io/github/repo-size/simeonpennisi/marketplace)
-![GitHub last commit](https://img.shields.io/github/last-commit/simeonpennisi/marketplace)
+![GitHub repo size](https://img.shields.io/github/repo-size/simeon-pennisi/marketplace)
+![GitHub last commit](https://img.shields.io/github/last-commit/simeon-pennisi/marketplace)
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://marketplace-client-cvgy.onrender.com)
 
 Production-style full-stack marketplace demonstrating authentication, ownership-based authorization, relational data modeling, and cloud deployment.
 
 This project focuses on backend architecture, API design, and secure full-stack integration, rather than purely UI features.
 
 ## Live Demo
-
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://marketplace-client-cvgy.onrender.com)
 
 Frontend  
 https://marketplace-client-cvgy.onrender.com
@@ -157,8 +157,7 @@ PostgreSQL Database
 
 ## Architecture Diagram
 
-<!-- mermaid -->
-
+```mermaid
 flowchart TB
 
 subgraph Client
@@ -240,6 +239,7 @@ LISTINGS ||--o{ FAVORITES : favorited
 LISTINGS ||--o{ REVIEWS : reviewed
 ORDERS ||--o{ ORDER_ITEMS : contains
 LISTINGS ||--o{ ORDER_ITEMS : purchased
+```
 
 ---
 
