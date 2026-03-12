@@ -15,10 +15,6 @@
 
 [![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://marketplace-client-cvgy.onrender.com)
 
-Production-style full-stack marketplace demonstrating authentication, ownership-based authorization, relational data modeling, and cloud deployment.
-
-This project focuses on backend architecture, API design, and secure full-stack integration, rather than purely UI features.
-
 ## Live Demo
 
 Frontend  
@@ -43,46 +39,47 @@ These accounts are seeded automatically.
 | Alice Seller | alice@example.com   | AlicePass2026! |
 | Bob Buyer    | bob@example.com     | BobPass2026!   |
 
-## Key Features
+---
 
-#### Authentication
+# System Architecture
 
-- JWT-based authentication
-- bcrypt password hashing
-- token expiration with auto-logout
+```mermaid
+flowchart TB
 
-#### Authorization
+User[User Browser]
 
-- ownership middleware ensures users can only modify their own listings
+subgraph Frontend
+React[React + Vite]
+AuthContext[Auth Context]
+Components[UI Components]
+end
 
-#### Listings
+subgraph Backend
+Express[Express API]
+AuthMiddleware[JWT Auth Middleware]
+Routes[Route Controllers]
+end
 
-- create listings
-- edit listings
-- delete listings
-- browse marketplace inventory
+subgraph Database
+Postgres[(PostgreSQL)]
+end
 
-#### Marketplace Interaction
-
-- favorites
-- reviews
-- simulated orders
-
-#### Database Integrity
-
-- foreign key constraints
-- composite unique constraints
-- enum validation via CHECK constraints
-
-#### Deployment
-
-- full production deployment via Render
-- environment-based configuration
-- idempotent seed scripts
+User --> React
+React --> AuthContext
+AuthContext --> Components
+React -->|HTTP Requests| Express
+Express --> AuthMiddleware
+AuthMiddleware --> Routes
+Routes -->|SQL Queries| Postgres
+```
 
 ---
 
-<p></p>
+# Project Overview
+
+Production-style full-stack marketplace demonstrating authentication, ownership-based authorization, relational data modeling, and cloud deployment.
+
+This project focuses on backend architecture, API design, and secure full-stack integration, rather than purely UI features.
 
 # Tech Stack
 
@@ -134,28 +131,50 @@ PostgreSQL (Render managed)
 - enum validation
 - composite uniqueness rules
 
+## Key Features
+
+#### Authentication
+
+- JWT-based authentication
+- bcrypt password hashing
+- token expiration with auto-logout
+
+#### Authorization
+
+- ownership middleware ensures users can only modify their own listings
+
+#### Listings
+
+- create listings
+- edit listings
+- delete listings
+- browse marketplace inventory
+
+#### Marketplace Interaction
+
+- favorites
+- reviews
+- simulated orders
+
+#### Database Integrity
+
+- foreign key constraints
+- composite unique constraints
+- enum validation via CHECK constraints
+
+#### Deployment
+
+- full production deployment via Render
+- environment-based configuration
+- idempotent seed scripts
+
 ---
 
 <p></p>
 
-# System Architecture
+<!-- ## Architecture Diagram -->
 
-## High-Level Overview
-
-<!-- fix this later -->
-
-React SPA (Vite)
-│
-│ HTTPS API Requests
-│ Authorization: Bearer <JWT>
-▼
-Express API Server
-│
-│ SQL Queries
-▼
-PostgreSQL Database
-
-## Architecture Diagram
+## Application Architecture
 
 ```mermaid
 flowchart TB
@@ -187,7 +206,7 @@ E --> G
 F --> G
 ```
 
-## Data Model
+## Database Schema
 
 ```mermaid
 erDiagram
@@ -334,7 +353,7 @@ curl -i -X DELETE https://marketplace-demo-lx2a.onrender.com/api/listings/LISTIN
 
 ---
 
-# Local Development
+# Local Setup
 
 ### Clone repository
 
