@@ -1,10 +1,22 @@
+import { Link } from "react-router-dom";
 import "../styles/pages/home.css";
 
 function HomePage() {
   return (
-    <div className="page home-page">
-      <h1>Welcome to TechMarket</h1>
-      <p>Your marketplace for quality refurbished tech gear.</p>
+    <div className="hero">
+      <img
+        className="hero-background"
+        src="/images/marketplace_background.jpg"
+        alt="blurry image of desk with computer"
+      />
+      <div className="hero-overlay">
+        <h1>Buy & Sell Tech Gear</h1>
+        <p>A marketplace for developers and creators</p>
+
+        <button>
+          <Link to="/listings">Browse Listings</Link>
+        </button>
+      </div>
     </div>
   );
 }
