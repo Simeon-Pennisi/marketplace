@@ -3,17 +3,17 @@ import "../styles/pages/home.css";
 
 function HomePage() {
   return (
-    <div className="hero">
-      <img
-        className="hero-background"
-        src="/images/marketplace_background.jpg"
-        alt="blurry image of desk with computer"
-      />
+    <div
+      className="hero"
+      style={{
+        backgroundImage: "url('/images/marketplace_background.jpg')",
+      }}
+    >
       <div className="hero-overlay">
         <h1>Buy & Sell Tech Gear</h1>
         <p>A marketplace for developers and creators</p>
 
-        <button>
+        <button className="hero-button">
           <Link to="/listings">Browse Listings</Link>
         </button>
       </div>

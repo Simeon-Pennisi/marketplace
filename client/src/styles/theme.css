@@ -112,22 +112,22 @@ textarea {
 /* ---------- Hero ---------- */
 
 .hero {
-  height: 360px;
+  height: 460px;
   background-size: cover;
   background-position: center;
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: center;
 }
 
-.hero-background {
-  height: 360px;
-  background-size: cover;
-  background-position: center;
+.hero-button {
+  margin-top: 20px;
 }
 
 .hero-overlay {
   background: rgba(0, 0, 0, 0.45);
+  margin-top: 80px;
+  margin-right: 30px;
   padding: 40px;
   color: white;
   text-align: center;
