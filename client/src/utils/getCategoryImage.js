@@ -4,8 +4,8 @@ import audioImg from "../assets/marketplace_audio.jpg";
 import laptopImg from "../assets/marketplace_laptop.jpg";
 import monitorImg from "../assets/marketplace_monitor.jpg";
 
-export function getCategoryImage(category) {
-  const normalized = category?.toLowerCase();
+export function getListingImage(listing) {
+  // const normalized = category?.toLowerCase();
 
   const imageMap = {
     accessories: accessoriesImg,
@@ -14,5 +14,10 @@ export function getCategoryImage(category) {
     monitor: monitorImg,
   };
 
-  return imageMap[normalized] || defaultImg;
+  const defaultImg = `https://placehold.co/400x300?text=${listing.category}`; // default placeholder image with category text
+
+  console.log("getListingImage called with category:", listing.category);
+  console.log("Returning image:", imageMap[listing.category] || defaultImg);
+  // return imageMap[normalized] || defaultImg;
+  return imageMap[listing.category] || defaultImg;
 }
