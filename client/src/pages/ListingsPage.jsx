@@ -1,7 +1,9 @@
 // client/src/pages/ListingsPage.jsx
 import { useEffect, useState } from "react";
-import "../styles/pages/listings.css";
+// import "../styles/pages/listings.css";
 import { API_BASE_URL } from "../config";
+
+import { getListingImage } from "../utils/getCategoryImage";
 
 function ListingsPage() {
   const [listings, setListings] = useState([]);
@@ -123,7 +125,7 @@ function ListingsPage() {
           <article key={listing.id} className="listing-card">
             {listing.image_url && (
               <img
-                src={listing.image_url}
+                src={getListingImage(listing)}
                 alt={listing.title}
                 className="listing-image"
               />

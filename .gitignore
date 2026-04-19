@@ -23,3 +23,8 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db 
 .vscode/
+
+# add server\src\db\index.js and server\src\db\seed.js to .gitignore
+# this is to separate local environment from production environment
+server/src/db/index.js
+server/src/db/seed.js

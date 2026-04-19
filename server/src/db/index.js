@@ -17,7 +17,8 @@ if (!connectionString) {
 
 const pool = new Pool({
   connectionString,
-  ssl: isProd ? { rejectUnauthorized: false } : false,
+  // ssl: isProd ? { rejectUnauthorized: false } : false,
+  ssl: { rejectUnauthorized: false },
 });
 
 export default pool;
