@@ -15,10 +15,16 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is not set");
 }
 
+// In production, we need to use SSL with rejectUnauthorized: false
+// const pool = new Pool({
+//   connectionString,
+//   // ssl: isProd ? { rejectUnauthorized: false } : false,
+//   ssl: { rejectUnauthorized: false },
+// });
+
 const pool = new Pool({
-  connectionString,
-  // ssl: isProd ? { rejectUnauthorized: false } : false,
-  ssl: { rejectUnauthorized: false },
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProd ? { rejectUnauthorized: false } : false,
 });
 
 export default pool;
