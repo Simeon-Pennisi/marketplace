@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: postgres # try actual passwords in production
       POSTGRES_DB: marketplace
     ports:
       - "5433:5432"
@@ -23,6 +23,7 @@ services:
       NODE_ENV: development
       PORT: 4000
       DATABASE_URL: postgres://postgres:postgres@db:5432/marketplace
+      JWT_SECRET: trust_no_3
     depends_on:
       - db
     volumes:
