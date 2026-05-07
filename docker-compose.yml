@@ -31,23 +31,23 @@ services:
       - /app/node_modules
     command: npm run dev
 
-    client:
-      build:
-        context: ./client
-        dockerfile: Dockerfile
-      container_name: marketplace-client
-      restart: unless-stopped
-      ports:
-        - "5173:5173"
-      environment:
-        VITE_API_BASE_URL: http://localhost:4000
-      depends_on:
-        - server
-      # SAVE FOR LATER: We can use volumes for development to enable hot reloading, but for now we'll just build the client and run it in production mode
-      # volumes:
-      #   - ./client:/app
-      #   - /app/node_modules
-      # command: npm start
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: marketplace-client
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://localhost:4000
+    depends_on:
+      - server
+    # SAVE FOR LATER: We can use volumes for development to enable hot reloading, but for now we'll just build the client and run it in production mode
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
 
 volumes:
   marketplace_pgdata:
