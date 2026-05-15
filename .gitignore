@@ -28,3 +28,5 @@ Thumbs.db
 # this is to separate local environment from production environment
 server/src/db/index.js
 server/src/db/seed.js
+
+database/*.sql

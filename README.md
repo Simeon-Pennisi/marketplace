@@ -9,6 +9,8 @@
 [![JWT](https://img.shields.io/badge/Auth-JWT-orange?logo=jsonwebtokens)]()
 [![Render](https://img.shields.io/badge/Deployment-Render-purple)]()
 [![License](https://img.shields.io/badge/License-MIT-lightgrey)]()
+[![Docker](https://img.shields.io/badge/Docker-19-blue?logo=docker)]()
+
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/simeon-pennisi/marketplace)
 ![GitHub last commit](https://img.shields.io/github/last-commit/simeon-pennisi/marketplace)
@@ -77,7 +79,7 @@ Routes -->|SQL Queries| Postgres
 
 # Project Overview
 
-Production-style full-stack marketplace demonstrating authentication, ownership-based authorization, relational data modeling, and cloud deployment.
+Production-style full-stack marketplace demonstrating authentication, ownership-based authorization, relational data modeling, cloud deployment, and Docker development setup.
 
 This project focuses on backend architecture, API design, and secure full-stack integration, rather than purely UI features.
 
@@ -417,6 +419,42 @@ This project is designed for easy redeployment.
 3. Deploy backend service
 4. Deploy frontend static site
 5. Run seed script
+
+---
+
+<p></p>
+
+## Docker Development Setup
+
+### Start full stack environment
+
+```bash
+docker compose up --build
+```
+
+### Services
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:4000
+- PostgreSQL: localhost:5433
+
+### Stop containers
+
+```bash
+docker compose down
+```
+
+### Rebuild containers
+
+```bash
+docker compose build --no-cache
+```
+
+### Restore database backup
+
+```bash
+Get-Content .\database\backup.sql | docker exec -i marketplace-db psql -U postgres -d marketplace
+```
 
 ---
 
